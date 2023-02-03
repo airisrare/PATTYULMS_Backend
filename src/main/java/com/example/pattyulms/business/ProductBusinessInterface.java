@@ -18,7 +18,11 @@ public interface ProductBusinessInterface {
 	 * @Param- List<ProductModel>
 	 */
     public List<ProductModel>getAllProducts();
+
+    //This will create a product using our product model 
     public ProductModel createProduct(ProductModel productModel);
+
+    //This will delete a product by id. Using the Int we created
     public int deleteProduct(String id);
     
 }

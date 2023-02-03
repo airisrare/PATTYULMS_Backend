@@ -1,6 +1,5 @@
 package com.example.pattyulms.controller;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.pattyulms.util.S3Util;
+import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ProductModel;
 import com.example.pattyulms.repository.ProductRepo;
 
@@ -29,10 +31,18 @@ public class ProductController {
     @Autowired
     ProductRepo productRepo;
 
+    @Autowired 
+    S3Util s3Util;
+
+    //how we will get configuration our of config file
+    @Autowired
+    s3Config s3Config;
+
     //Our ../api/products is the url for show all products
     @GetMapping("/products")
     //get all products will display all the products from the database
     public ResponseEntity<List<ProductModel>> getAllProducts(@RequestParam(required = false) String title)
+
     {
         try{
             //Create a new array list from database
@@ -63,19 +73,51 @@ public class ProductController {
     //This will insert a product into the database using Post
     @PostMapping("/products")
         //Use the createProduct function, the request will be from our model class
-        public ResponseEntity<ProductModel> createProduct(@RequestBody ProductModel productModel){
+        //request a "file" - picture for our product that will be stored into the s3 bucket
+        public ResponseEntity<ProductModel> createProduct(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles, ProductModel productModel){
+                
+                 System.out.println("----this is consoleprint-------"  + productModel.toString());
+                 System.out.println("----this is consoleprint-------"  + file.getOriginalFilename());
+            try{
+                String styleID = productModel.getStyleID();
+                // add image to s3 storage and return url to add to database
+                // Main Image
+                String mainImageURLS3 = s3Util.uploadFile(styleID,"main", file.getInputStream(), null);
+                 // add images to s3 storage and return multiple urls into list
+                 List<String> moreS3ImageURLs = new ArrayList<String>();
+            
+                 for (MultipartFile otherFile : additionalFiles){
+                    moreS3ImageURLs.add(s3Util.uploadFile(styleID, otherFile.getOriginalFilename(), otherFile.getInputStream(), null));
+
+                 }
+
+                 productModel.setImageURL(mainImageURLS3);
+
+                 
+                 //list is converted back to array
+                 productModel.setMoreImageURLs(moreS3ImageURLs.toArray(new String[moreS3ImageURLs.size()]));
+            }catch (Exception e) {
+                // handle the exception
+                // log the error message
+                System.out.println("Error uploading file to S3: " + e.getMessage());
+              }
+
             try{
                 //Use the save method that is implemented from mongoDB repository
                 //Creating a return value from our model to insert into the product repository
                 ProductModel returnVal = productRepo.insert(productModel);
                 //Return our new entity with our return value
                 return new ResponseEntity<>(returnVal, HttpStatus.CREATED);
+                
+                
+
             }catch (Exception e){
                 //If there is an exception, we will print the exception and return an error
                 //Nothing will be posted if their is an error
                 System.out.println(e);
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+            
         } 
     
             
@@ -95,7 +137,6 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     //Product Update function, finding the product ID and updating the document based on ID
     @PutMapping(value ="/products/{id}")
@@ -140,7 +181,6 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 }
 
 

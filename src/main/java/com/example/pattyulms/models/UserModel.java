@@ -1,97 +1,103 @@
 package com.example.pattyulms.models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "users")
 public class UserModel 
 {
-    private int _id;
-    private int UserID;
-    private String Email;
-    private String Username;
-    private String Password;
-    private int Role;
-    private String Firstname;
-    private String Lastname;
+    @Id
+    private String userID;
+    private String email;
+    private String username;
+    private String password;
+    private int role;
+    private String firstname;
+    private String lastname;
 
     //Default Constructor
     public UserModel() {
 
     }
 
-    public UserModel(int _id, int UserID, String Email, String Username, String Password, int Role, String Firstname, String Lastname)
+    public UserModel(String userID, String email, String username, String password, int role, String firstname, String lastname)
     {
         super();
-        this._id = _id;
-        this.UserID = UserID;
-        this.Email = Email;
-        this.Username = Username;
-        this.Password = Password;
-        this.Role = Role;
-        this.Firstname = Firstname;
-        this.Lastname = Lastname;
+        this.userID = userID;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 
-    public int get_id() {
-        return _id;
+    public String getUserID() {
+        return userID;
     }
 
-    public void set_id(int _id) {
-        this._id = _id;
-    }
-
-    public int getUserID() {
-        return UserID;
-    }
-
-    public void setUserID(int userID) {
-        UserID = userID;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        Username = username;
+        this.username = username;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public int getRole() {
-        return Role;
+        return role;
     }
 
     public void setRole(int role) {
-        Role = role;
+        this.role = role;
     }
 
     public String getFirstname() {
-        return Firstname;
+        return firstname;
     }
 
     public void setFirstname(String firstname) {
-        Firstname = firstname;
+        this.firstname = firstname;
     }
 
     public String getLastname() {
-        return Lastname;
+        return lastname;
     }
 
     public void setLastname(String lastname) {
-        Lastname = lastname;
+        this.lastname = lastname;
     }
+
+    @Override
+    public String toString() {
+        return "UserModel [userID=" + userID + ", email=" + email + ", username=" + username + ", password=" + password
+                + ", role=" + role + ", firstname=" + firstname + ", lastname=" + lastname + "]";
+    }
+
+    
+
+
+    
 
     
     
