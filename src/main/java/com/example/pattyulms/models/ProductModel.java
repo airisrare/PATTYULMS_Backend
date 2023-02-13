@@ -20,7 +20,8 @@ public class ProductModel {
     @Id
     private String productID;
     private String title;
-    private Decimal128 price;
+    //Price must be a string when used in form data, It is their text, or file through postman
+    private String price;
     private String gender;
     private String size;
     private String description;
@@ -41,7 +42,7 @@ public class ProductModel {
 
     }
     
-    public ProductModel(String productID, String title, Decimal128 price, String gender, String size, String description, String imageURL, String[] moreImageURLs, String styleID)
+    public ProductModel(String productID, String title, String price, String gender, String size, String description, String imageURL, String[] moreImageURLs, String styleID)
     {
         super();
         this.productID = productID;
@@ -76,11 +77,11 @@ public class ProductModel {
         this.title = title;
     }
 
-    public Decimal128 getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Decimal128 price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ConceptModel;
 import com.example.pattyulms.repository.ConceptRepo;
+import com.example.pattyulms.util.S3Util;
 
 @RestController
 @RequestMapping("/concepts")
@@ -25,6 +29,13 @@ public class ConceptController {
     
     @Autowired
     ConceptRepo conceptRepo;
+
+    @Autowired
+    S3Util s3Util;
+
+    //This is how we will get configuration out of config file
+    @Autowired
+    s3Config s3Config;
 
     @GetMapping("/gallery")
     //Get all concepts from the database
@@ -54,9 +65,29 @@ public class ConceptController {
     }
 
     //This will insert concepts into the database
-    @PostMapping("/concepts")
+    @PostMapping("/gallery")
     //Use the createConcept function, the request will be from our model class
-    public ResponseEntity<ConceptModel> createConcept(@RequestBody ConceptModel conceptModel){
+    public ResponseEntity<ConceptModel> createConcept(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles,@RequestBody ConceptModel conceptModel){
+        try{
+            String styleID = conceptModel.getStyleID();
+             // add image to s3 storage and return url to add to database
+            // Main Image
+            String mainImageURLS3 = s3Util.uploadFile(styleID,"main", file.getInputStream(), null);
+                 // add images to s3 storage and return multiple urls into list
+                 List<String> moreS3ImageURLs = new ArrayList<String>();
+            
+                 for (MultipartFile otherFile : additionalFiles){
+                    moreS3ImageURLs.add(s3Util.uploadFile(styleID, otherFile.getOriginalFilename(), otherFile.getInputStream(), null));
+        }
+
+        conceptModel.setImageURL(mainImageURLS3);
+         //list is converted back to array
+         conceptModel.setMoreImageURLs(moreS3ImageURLs.toArray(new String[moreS3ImageURLs.size()]));
+        }catch (Exception e) {
+            // handle the exception
+            // log the error message
+            System.out.println("Error uploading file to S3: " + e.getMessage());
+          }
         try{
         //Use the save method that is implemented from mongoDB repository
         //Creating a return value from our model to insert into the concept repo
@@ -90,7 +121,7 @@ public class ConceptController {
         //Concept Update function, finding the Concept ID and updating the document based on the ID
         @PutMapping(value ="/concepts/{id}")
         //Path Variable - Id. Meaning we will pass ID in our URL
-        public ResponseEntity<ConceptModel> updateConcept(@PathVariable("id") String id, @RequestBody ConceptModel conceptModel){
+        public ResponseEntity<ConceptModel> updateConcept(@PathVariable("id") String id, @RequestBody ConceptModel conceptModel, @RequestParam("file") MultipartFile file){
             //Here we will find the id that we will update
             Optional<ConceptModel> conceptDataUpdate = conceptRepo.findById(id);
             //If the document ID is present, we will get and set the new fields
@@ -100,6 +131,7 @@ public class ConceptController {
                 concept.setConceptID(conceptModel.getConceptID());
                 concept.setTitle(conceptModel.getTitle());
                 concept.setDescription(conceptModel.getDescription());
+                concept.setImageURL(conceptModel.getImageURL());
 
                 return new ResponseEntity<>(conceptRepo.save(concept), HttpStatus.OK);
             } else{

@@ -11,6 +11,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 
+/*- Noah Roerig helped me configure the s3 bucket while Jack Blackwell 
+//taught me how s3 worked overall. Thank you for being great classmates and 
+teachers */
 
 @Configuration
 public class s3Config {
@@ -24,6 +27,7 @@ public class s3Config {
     // @Value("${aws.s3.region}")
     // private String region;
 
+    // This config file will generate aws credentials, we will communicate with the s3 bucket with this
     @Bean
     public S3Client s3Client(){
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);

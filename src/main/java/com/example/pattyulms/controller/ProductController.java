@@ -23,18 +23,27 @@ import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ProductModel;
 import com.example.pattyulms.repository.ProductRepo;
 
+
+
+/*- Noah Roerig helped me configure the s3 bucket while Jack Blackwell 
+//taught me how s3 worked overall. Thank you for being great classmates and 
+teachers */
+
+
+
 //Rest controller annotation will controll API request from clients
 @RestController
 @RequestMapping("/api")
 public class ProductController {
 
+    
     @Autowired
     ProductRepo productRepo;
 
     @Autowired 
     S3Util s3Util;
 
-    //how we will get configuration our of config file
+    //This is how we will get configuration out of config file
     @Autowired
     s3Config s3Config;
 
@@ -76,8 +85,8 @@ public class ProductController {
         //request a "file" - picture for our product that will be stored into the s3 bucket
         public ResponseEntity<ProductModel> createProduct(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles, ProductModel productModel){
                 
-                 System.out.println("----this is consoleprint-------"  + productModel.toString());
-                 System.out.println("----this is consoleprint-------"  + file.getOriginalFilename());
+                //  System.out.println("----this is consoleprint-------"  + productModel.toString());
+                //  System.out.println("----this is consoleprint-------"  + file.getOriginalFilename());
             try{
                 String styleID = productModel.getStyleID();
                 // add image to s3 storage and return url to add to database
@@ -86,6 +95,7 @@ public class ProductController {
                  // add images to s3 storage and return multiple urls into list
                  List<String> moreS3ImageURLs = new ArrayList<String>();
             
+                 //Additional images if we would like
                  for (MultipartFile otherFile : additionalFiles){
                     moreS3ImageURLs.add(s3Util.uploadFile(styleID, otherFile.getOriginalFilename(), otherFile.getInputStream(), null));
 
@@ -153,6 +163,8 @@ public class ProductController {
             product.setGender(productModel.getGender());
             product.setSize(productModel.getSize());
             product.setDescription(productModel.getDescription());
+            product.setImageURL(productModel.getImageURL());
+            
 
             // HttpStatus.OK is an enumeration value in the HttpStatus class that 
             // represents a status code of 200. It indicates that the request was successful 

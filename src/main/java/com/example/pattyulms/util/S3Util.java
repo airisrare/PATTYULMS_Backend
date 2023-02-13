@@ -22,10 +22,19 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+/*- Noah Roerig helped me configure the s3 bucket while Jack Blackwell 
+//taught me how s3 worked overall. Thank you for being great classmates and 
+teachers */
+
+
+
+
 @Service
 public class S3Util {
+    //Bucket name
     private final String BUCKET = "pattyulms-bucket";
 
+    //s3 Client used 
     @Autowired S3Client s3Client;
 
     @Value("${aws.s3.region}")
@@ -34,14 +43,16 @@ public class S3Util {
     
 
     public String uploadFile(
-        
+        //Style id is how we will organise our images
         String styleID,
+        //filename is the actual file we are using 
         String fileName,
         InputStream inputStream,
         Optional<Map<String, String>> optionalMetaData)
         throws S3Exception, AwsServiceException, SdkClientException, IOException
         {
-            System.out.println(region);
+            //Make sure we are in the right region
+            //System.out.println(region);
             ObjectMetadata objectMetadata = new ObjectMetadata();
 
             if(optionalMetaData != null){
@@ -55,6 +66,7 @@ public class S3Util {
         // use fileName. This will keep all images unique within their directories
         String finalFileName = String.format("%s/%s", styleID, fileName);
 
+        //This is what we are requesting from the object request. Thi sof a payload
         PutObjectRequest request = PutObjectRequest.builder()
             .bucket(BUCKET)
             .key(finalFileName) 
@@ -69,6 +81,7 @@ public class S3Util {
             return s3Url;
         }
 
+        //Download file
         public byte[] downloadFile(String fileName){
             GetObjectRequest request = GetObjectRequest.builder().bucket(BUCKET).key(fileName).build();
 
