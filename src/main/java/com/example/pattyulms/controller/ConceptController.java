@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.pattyulms.repository.ConceptSequenceGenService;
 import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ConceptModel;
 import com.example.pattyulms.repository.ConceptRepo;
 import com.example.pattyulms.util.S3Util;
+
 
 @RestController
 @RequestMapping("/concepts")
@@ -29,6 +32,9 @@ public class ConceptController {
     
     @Autowired
     ConceptRepo conceptRepo;
+
+    @Autowired
+    ConceptSequenceGenService conceptSequenceGenService;
 
     @Autowired
     S3Util s3Util;
@@ -51,7 +57,7 @@ public class ConceptController {
 
                 //If the documents are empty, we will return no content
                 if(conceptModel.isEmpty()){
-                    return new ResponseEntity<>(conceptModel,HttpStatus.OK);
+                    return new ResponseEntity<>(conceptModel,HttpStatus.NO_CONTENT);
                 }
                 //Return new entity with our concept model
                 return new ResponseEntity<>(conceptModel,HttpStatus.OK);
@@ -67,7 +73,7 @@ public class ConceptController {
     //This will insert concepts into the database
     @PostMapping("/gallery")
     //Use the createConcept function, the request will be from our model class
-    public ResponseEntity<ConceptModel> createConcept(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles,@RequestBody ConceptModel conceptModel){
+    public ResponseEntity<ConceptModel> createConcept(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles,ConceptModel conceptModel){
         try{
             String styleID = conceptModel.getStyleID();
              // add image to s3 storage and return url to add to database
@@ -81,6 +87,8 @@ public class ConceptController {
         }
 
         conceptModel.setImageURL(mainImageURLS3);
+
+        
          //list is converted back to array
          conceptModel.setMoreImageURLs(moreS3ImageURLs.toArray(new String[moreS3ImageURLs.size()]));
         }catch (Exception e) {
@@ -89,6 +97,10 @@ public class ConceptController {
             System.out.println("Error uploading file to S3: " + e.getMessage());
           }
         try{
+            //Auto-Increment ID
+            conceptModel.setConceptID(conceptSequenceGenService.generateSequence(conceptModel.SEQUENCE_NAME));
+
+
         //Use the save method that is implemented from mongoDB repository
         //Creating a return value from our model to insert into the concept repo
         ConceptModel returnVal = conceptRepo.insert(conceptModel);
@@ -116,7 +128,6 @@ public class ConceptController {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        
     }
         //Concept Update function, finding the Concept ID and updating the document based on the ID
         @PutMapping(value ="/concepts/{id}")
@@ -157,4 +168,4 @@ public class ConceptController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-} 
+}

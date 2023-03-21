@@ -2,8 +2,8 @@ package com.example.pattyulms.models;
 
 import java.util.Arrays;
 
-import org.bson.types.Decimal128;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 //import jakarta.websocket.Decoder.Binary;
@@ -13,12 +13,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "products")
 public class ProductModel {
 
-    //ID given by mongo
-    // private ObjectId _id;
+
+    @Transient
+    public static final String SEQUENCE_NAME = "product_sequence";
+
     
     //ID annotation for the integer ID in the database
     @Id
-    private String productID;
+    private Long productID;
     private String title;
     //Price must be a string when used in form data, It is their text, or file through postman
     private String price;
@@ -42,7 +44,7 @@ public class ProductModel {
 
     }
     
-    public ProductModel(String productID, String title, String price, String gender, String size, String description, String imageURL, String[] moreImageURLs, String styleID)
+    public ProductModel(Long productID, String title, String price, String gender, String size, String description, String imageURL, String[] moreImageURLs, String styleID)
     {
         super();
         this.productID = productID;
@@ -56,16 +58,12 @@ public class ProductModel {
         this.styleID = styleID;
     }
 
-
-
-
-
      //Getter and setters
-    public String getProductID() {
+    public Long getProductID() {
         return productID;
     }
 
-    public void setProductID(String productID) {
+    public void setProductID(Long productID) {
         this.productID = productID;
     }
 

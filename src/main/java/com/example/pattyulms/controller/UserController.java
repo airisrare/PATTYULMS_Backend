@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.pattyulms.models.UserModel;
 import com.example.pattyulms.repository.UserRepo;
+import com.example.pattyulms.repository.UserSequenceGenService;
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +27,9 @@ public class UserController {
 
     @Autowired
     UserRepo userRepo;
+
+    @Autowired
+    UserSequenceGenService userSequenceGenService;
     
     @GetMapping("/everyone")
     //Get all users will display all the users from the database
@@ -62,6 +66,10 @@ public class UserController {
     //Use the createUser function, the request will be from our model class
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel userModel){
         try{
+
+            //Auto-Increment ID
+            userModel.setUserID(userSequenceGenService.generateSequence(userModel.SEQUENCE_NAME));
+
              //Use the save method that is implemented from mongoDB repository
                 //Creating a return value from our model to insert into the user repository
                 UserModel returnVal = userRepo.insert(userModel);

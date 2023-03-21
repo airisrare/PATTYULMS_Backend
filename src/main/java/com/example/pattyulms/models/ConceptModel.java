@@ -3,11 +3,19 @@ package com.example.pattyulms.models;
 import java.util.Arrays;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "concepts")
 public class ConceptModel 
 {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "concept_sequence";
+
+
     @Id
-    private String conceptID;
+    private Long conceptID;
     private String title;
     private String description;
     //Unique ID for images of only products for now 
@@ -22,7 +30,6 @@ public class ConceptModel
 
     
     
-    
 
     //Default Constructor
     public ConceptModel()
@@ -30,8 +37,9 @@ public class ConceptModel
 
     }
 
-    public ConceptModel(String conceptID, String title, String description,String imageURL, String[] moreImageURLs, String styleID)
+    public ConceptModel(Long conceptID, String title, String description,String imageURL, String[] moreImageURLs, String styleID)
     {
+        super();
         this.conceptID = conceptID;
         this.title = title;
         this.description = description;
@@ -41,11 +49,12 @@ public class ConceptModel
         
     }
 
-    public String getConceptID() {
+    //getters and setters
+    public Long getConceptID() {
         return conceptID;
     }
 
-    public void setConceptID(String conceptID) {
+    public void setConceptID(Long conceptID) {
         this.conceptID = conceptID;
     }
 
@@ -103,10 +112,5 @@ public class ConceptModel
                 + ", styleID=" + styleID + ", imageURL=" + imageURL + ", moreImageURLs="
                 + Arrays.toString(moreImageURLs) + ", version=" + version + "]";
     }
-
-    
-  
-
-    
     
 }

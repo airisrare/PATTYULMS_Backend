@@ -89,10 +89,5 @@ public class S3Util {
             byte[] data = objectBytes.asByteArray();
             return data;
         }
-
-    
-
-    
-
     
 }

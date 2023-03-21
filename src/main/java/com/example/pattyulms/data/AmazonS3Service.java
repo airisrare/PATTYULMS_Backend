@@ -17,6 +17,4 @@ public class AmazonS3Service {
         return s3Util.downloadFile(fileName);
     }
     
-
-    
 }
