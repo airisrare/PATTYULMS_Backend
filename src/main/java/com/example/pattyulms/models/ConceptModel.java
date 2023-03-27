@@ -3,11 +3,19 @@ package com.example.pattyulms.models;
 import java.util.Arrays;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "concepts")
 public class ConceptModel 
 {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "concept_sequence";
+
+
     @Id
-    private String conceptID;
+    private Long conceptID;
     private String title;
     private String description;
     //Unique ID for images of only products for now 
@@ -15,12 +23,13 @@ public class ConceptModel
 
     //urls for images in our s3 bucket
     private String imageURL = "";
-    private String[] moreImageURLs = new String [0];
+
+    //Only one image
+    // private String[] moreImageURLs = new String [0];
 
     //aws details
     private String version = "1";
 
-    
     
     
 
@@ -30,22 +39,23 @@ public class ConceptModel
 
     }
 
-    public ConceptModel(String conceptID, String title, String description,String imageURL, String[] moreImageURLs, String styleID)
+    public ConceptModel(Long conceptID, String title, String description,String imageURL, String styleID)
     {
+        super();
         this.conceptID = conceptID;
         this.title = title;
         this.description = description;
         this.imageURL = imageURL;
-        this.moreImageURLs = moreImageURLs;
         this.styleID = styleID;
         
     }
 
-    public String getConceptID() {
+    //getters and setters
+    public Long getConceptID() {
         return conceptID;
     }
 
-    public void setConceptID(String conceptID) {
+    public void setConceptID(Long conceptID) {
         this.conceptID = conceptID;
     }
 
@@ -81,13 +91,13 @@ public class ConceptModel
         this.imageURL = imageURL;
     }
 
-    public String[] getMoreImageURLs() {
-        return moreImageURLs;
-    }
+    // public String[] getMoreImageURLs() {
+    //     return moreImageURLs;
+    // }
 
-    public void setMoreImageURLs(String[] moreImageURLs) {
-        this.moreImageURLs = moreImageURLs;
-    }
+    // public void setMoreImageURLs(String[] moreImageURLs) {
+    //     this.moreImageURLs = moreImageURLs;
+    // }
 
     public String getVersion() {
         return version;
@@ -100,13 +110,9 @@ public class ConceptModel
     @Override
     public String toString() {
         return "ConceptModel [conceptID=" + conceptID + ", title=" + title + ", description=" + description
-                + ", styleID=" + styleID + ", imageURL=" + imageURL + ", moreImageURLs="
-                + Arrays.toString(moreImageURLs) + ", version=" + version + "]";
+                + ", styleID=" + styleID + ", imageURL=" + imageURL + ", version=" + version + "]";
     }
 
-    
-  
-
-    
+   
     
 }

@@ -22,6 +22,9 @@ import com.example.pattyulms.util.S3Util;
 import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ProductModel;
 import com.example.pattyulms.repository.ProductRepo;
+import com.example.pattyulms.repository.ProductSequenceGenService;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 
 
@@ -32,6 +35,7 @@ teachers */
 
 
 //Rest controller annotation will controll API request from clients
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class ProductController {
@@ -39,6 +43,9 @@ public class ProductController {
     
     @Autowired
     ProductRepo productRepo;
+
+    @Autowired
+    ProductSequenceGenService productSequenceGenService;
 
     @Autowired 
     S3Util s3Util;
@@ -85,8 +92,6 @@ public class ProductController {
         //request a "file" - picture for our product that will be stored into the s3 bucket
         public ResponseEntity<ProductModel> createProduct(@RequestParam("file") MultipartFile file, @RequestParam("additionalFiles") MultipartFile[] additionalFiles, ProductModel productModel){
                 
-                //  System.out.println("----this is consoleprint-------"  + productModel.toString());
-                //  System.out.println("----this is consoleprint-------"  + file.getOriginalFilename());
             try{
                 String styleID = productModel.getStyleID();
                 // add image to s3 storage and return url to add to database
@@ -113,6 +118,12 @@ public class ProductController {
               }
 
             try{
+
+
+                //Auto Increment ID
+                productModel.setProductID(productSequenceGenService.generateSequence(productModel.SEQUENCE_NAME));
+
+
                 //Use the save method that is implemented from mongoDB repository
                 //Creating a return value from our model to insert into the product repository
                 ProductModel returnVal = productRepo.insert(productModel);

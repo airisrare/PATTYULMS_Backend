@@ -1,13 +1,19 @@
 package com.example.pattyulms.models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 public class UserModel 
 {
+
+    @Transient
+    public static final String SEQUENCE_NAME = "user_sequence";
+
+
     @Id
-    private String userID;
+    private Long userID;
     private String email;
     private String username;
     private String password;
@@ -20,7 +26,7 @@ public class UserModel
 
     }
 
-    public UserModel(String userID, String email, String username, String password, int role, String firstname, String lastname)
+    public UserModel(Long userID, String email, String username, String password, int role, String firstname, String lastname)
     {
         super();
         this.userID = userID;
@@ -32,11 +38,11 @@ public class UserModel
         this.lastname = lastname;
     }
 
-    public String getUserID() {
+    public Long getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(Long userID) {
         this.userID = userID;
     }
 
@@ -93,12 +99,5 @@ public class UserModel
         return "UserModel [userID=" + userID + ", email=" + email + ", username=" + username + ", password=" + password
                 + ", role=" + role + ", firstname=" + firstname + ", lastname=" + lastname + "]";
     }
-
-    
-
-
-    
-
-    
     
 }
