@@ -7,50 +7,43 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "concepts")
-public class ConceptModel 
-{
+public class ConceptModel {
 
     @Transient
     public static final String SEQUENCE_NAME = "concept_sequence";
-
 
     @Id
     private Long conceptID;
     private String title;
     private String description;
-    //Unique ID for images of only products for now 
+    // Unique ID for images of only products for now
     private String styleID;
 
-    //urls for images in our s3 bucket
+    // urls for images in our s3 bucket
     private String imageURL = "";
 
-    //Only one image
+    // Only one image
     // private String[] moreImageURLs = new String [0];
 
-    //aws details
+    // aws details
     private String version = "1";
 
-    
-    
-
-    //Default Constructor
-    public ConceptModel()
-    {
+    // Default Constructor
+    public ConceptModel() {
 
     }
 
-    public ConceptModel(Long conceptID, String title, String description,String imageURL, String styleID)
-    {
+    public ConceptModel(Long conceptID, String title, String description, String imageURL, String styleID) {
         super();
         this.conceptID = conceptID;
         this.title = title;
         this.description = description;
         this.imageURL = imageURL;
         this.styleID = styleID;
-        
+
     }
 
-    //getters and setters
+    // getters and setters
     public Long getConceptID() {
         return conceptID;
     }
@@ -92,11 +85,11 @@ public class ConceptModel
     }
 
     // public String[] getMoreImageURLs() {
-    //     return moreImageURLs;
+    // return moreImageURLs;
     // }
 
     // public void setMoreImageURLs(String[] moreImageURLs) {
-    //     this.moreImageURLs = moreImageURLs;
+    // this.moreImageURLs = moreImageURLs;
     // }
 
     public String getVersion() {
@@ -113,6 +106,4 @@ public class ConceptModel
                 + ", styleID=" + styleID + ", imageURL=" + imageURL + ", version=" + version + "]";
     }
 
-   
-    
 }
