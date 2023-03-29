@@ -72,6 +72,9 @@ public class ConceptController {
     }
 
     // This will insert concepts into the database
+    // With concepts it is important to know that their is only one picture,
+    // description and title.
+    // We only need "file" -> MainImageURLs
     @PostMapping("/gallery")
     // Use the createConcept function, the request will be from our model class
     public ResponseEntity<ConceptModel> createConcept(@RequestParam("file") MultipartFile file,
