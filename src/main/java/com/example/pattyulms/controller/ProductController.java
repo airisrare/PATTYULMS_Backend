@@ -136,7 +136,7 @@ public class ProductController {
 
     // In this function, we will delete a product by our ID from the database
     @DeleteMapping(value = "/products/{id}")
-    public ResponseEntity<ProductModel> deleteProduct(@PathVariable String id) {
+    public ResponseEntity<ProductModel> deleteProduct(@PathVariable Long id) {
         try {
             // Using function from the implimented Mongo Repository
             productRepo.deleteById(id);
@@ -157,12 +157,15 @@ public class ProductController {
     // Path Variable - ID. Meaning we will pass ID in our url
     public ResponseEntity<ProductModel> updateProduct(@PathVariable("id") String id,
             @RequestBody ProductModel productModel) {
+
+        Long productId = Long.parseLong(id);
+
         // Here we will find the id that we will update
-        Optional<ProductModel> productDataUpdate = productRepo.findById(id);
+        Optional<ProductModel> productDataUpdate = productRepo.findById(productId);
         // If the doumentID is present, we will get and set the new fields
         if (productDataUpdate.isPresent()) {
             ProductModel product = productDataUpdate.get();
-            product.setProductID(productModel.getProductID());
+            // product.setProductID(productModel.getProductID());
             product.setTitle(productModel.getTitle());
             product.setPrice(productModel.getPrice());
             product.setGender(productModel.getGender());
@@ -183,12 +186,16 @@ public class ProductController {
     // Passing the ID variable in our url
     @GetMapping(value = "/products/{id}")
     public ResponseEntity<ProductModel> getProductID(@PathVariable String id) {
+        Long productId = Long.parseLong(id);
         // Here we will use the find by ID function implemented from the mongo
         // repository
-        Optional<ProductModel> productDataID = productRepo.findById(id);
+
+        Optional<ProductModel> productDataID = productRepo.findById(productId);
+        // Optional<ProductModel> productDataID = productRepo.findById(id);
+
         try {
             // Attempt to find ID
-            productRepo.findById(id);
+            // productRepo.findById(id);
             // If found, get the entity
             return new ResponseEntity<>(productDataID.get(), HttpStatus.OK);
             // If we get an exception or nothing found we will print the exception, and
@@ -198,4 +205,5 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }

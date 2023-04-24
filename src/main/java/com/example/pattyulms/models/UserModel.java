@@ -1,39 +1,57 @@
 package com.example.pattyulms.models;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
-public class UserModel 
-{
+public class UserModel {
 
     @Transient
     public static final String SEQUENCE_NAME = "user_sequence";
 
-
     @Id
     private Long userID;
+
     private String email;
+
+    @NotBlank
+    @Size(max = 20)
     private String username;
+
+    @NotBlank
+    @Size(max = 15)
     private String password;
-    private int role;
+
+    @NotBlank
+    @Size(max = 15)
     private String firstname;
+    @NotBlank
+    @Size(max = 15)
     private String lastname;
 
-    //Default Constructor
+    @DBRef
+    private Set<UserRole> roles = new HashSet<>();
+
+    // Default Constructor
     public UserModel() {
 
     }
 
-    public UserModel(Long userID, String email, String username, String password, int role, String firstname, String lastname)
-    {
+    public UserModel(Long userID, String email, String username, String password, String firstname,
+            String lastname) {
         super();
         this.userID = userID;
         this.email = email;
         this.username = username;
         this.password = password;
-        this.role = role;
         this.firstname = firstname;
         this.lastname = lastname;
     }
@@ -70,14 +88,6 @@ public class UserModel
         this.password = password;
     }
 
-    public int getRole() {
-        return role;
-    }
-
-    public void setRole(int role) {
-        this.role = role;
-    }
-
     public String getFirstname() {
         return firstname;
     }
@@ -94,10 +104,18 @@ public class UserModel
         this.lastname = lastname;
     }
 
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<UserRole> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "UserModel [userID=" + userID + ", email=" + email + ", username=" + username + ", password=" + password
-                + ", role=" + role + ", firstname=" + firstname + ", lastname=" + lastname + "]";
+                + ", firstname=" + firstname + ", lastname=" + lastname + "]";
     }
-    
+
 }

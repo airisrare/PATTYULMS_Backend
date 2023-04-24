@@ -43,7 +43,7 @@ public class UserController {
             if (username == null)
                 userRepo.findAll().forEach(userModel::add);
             else
-                userRepo.findByUsername(username).forEach(userModel::add);
+                userRepo.findAllByUsername(username).forEach(userModel::add);
 
             // if the documents are empty, we will return no content
             if (userModel.isEmpty()) {
@@ -88,7 +88,7 @@ public class UserController {
 
     // In this function, we will delete a product by our ID from the database
     @DeleteMapping(value = "/everyone/{id}")
-    public ResponseEntity<UserModel> deleteUser(@PathVariable String id) {
+    public ResponseEntity<UserModel> deleteUser(@PathVariable Long id) {
         try {
             // Using function from the implimented Mongo Repository
             userRepo.deleteById(id);
@@ -107,7 +107,7 @@ public class UserController {
     // be updated is
     // the everyone page with the specific ID we are changing
     @PutMapping(value = "/everyone/{id}")
-    public ResponseEntity<UserModel> updateUser(@PathVariable("id") String id, @RequestBody UserModel userModel) {
+    public ResponseEntity<UserModel> updateUser(@PathVariable("id") Long id, @RequestBody UserModel userModel) {
         // Here we will find the id that we will update
         Optional<UserModel> userDataUpdate = userRepo.findById(id);
         // If the ID we are looking for is present, we will get and set the new user
@@ -134,7 +134,9 @@ public class UserController {
     // Here we will get a product by its ID
     // Passing the ID variable in our url
     @GetMapping(value = "/everyone/{id}")
-    public ResponseEntity<UserModel> getUserID(@PathVariable String id) {
+    public ResponseEntity<UserModel> getUserID(@PathVariable Long id) {
+
+        // Long userId = Long.parseLong(id);
         Optional<UserModel> userDataID = userRepo.findById(id);
         try {
             // Attempt to find ID

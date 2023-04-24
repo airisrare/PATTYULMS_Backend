@@ -14,15 +14,19 @@ import io.micrometer.core.ipc.http.HttpSender.Response;
  */
 public interface ProductBusinessInterface {
 
-    /* List returning all the orders from the database
-	 * @Param- List<ProductModel>
-	 */
-    public List<ProductModel>getAllProducts();
+    /*
+     * List returning all the orders from the database
+     * 
+     * @Param- List<ProductModel>
+     */
+    public List<ProductModel> getAllProducts();
 
-    //This will create a product using our product model 
+    // This will create a product using our product model
     public ProductModel createProduct(ProductModel productModel);
 
-    //This will delete a product by id. Using the Int we created
-    public int deleteProduct(String id);
-    
+    // This will delete a product by id. Using the Int we created
+    public int deleteProduct(Long id);
+
+    // public ProductModel getProductById(Long id);
+
 }
