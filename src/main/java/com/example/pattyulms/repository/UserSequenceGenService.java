@@ -13,19 +13,20 @@ import org.springframework.data.mongodb.core.query.Update;
 
 @Service
 public class UserSequenceGenService {
+    // Add 1 to id sequence in mongo
 
     private MongoOperations mongoOperations;
 
     @Autowired
-    public UserSequenceGenService(MongoOperations mongoOperations){
+    public UserSequenceGenService(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
 
-    public Long generateSequence(String seqName){
-         UserSequence counter = mongoOperations.findAndModify(query(where("userID").is(seqName)),
-         new Update().inc("seq",1), options().returnNew(true).upsert(true),
-         UserSequence.class);
-         return !Objects.isNull(counter) ? counter.getSeq() : 1;
+    public Long generateSequence(String seqName) {
+        UserSequence counter = mongoOperations.findAndModify(query(where("userID").is(seqName)),
+                new Update().inc("seq", 1), options().returnNew(true).upsert(true),
+                UserSequence.class);
+        return !Objects.isNull(counter) ? counter.getSeq() : 1;
     }
-    
+
 }

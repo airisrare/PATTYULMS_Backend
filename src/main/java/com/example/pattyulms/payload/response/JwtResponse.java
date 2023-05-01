@@ -1,6 +1,7 @@
 package com.example.pattyulms.payload.response;
 
 import java.util.List;
+//This is the JWT response with the token, roles and credentials
 
 public class JwtResponse {
     private String token;
@@ -8,18 +9,14 @@ public class JwtResponse {
     private Long userID;
     private String username;
     private String email;
-    private String firstname;
-    private String lastname;
     private List<String> roles;
 
-    public JwtResponse(String accessToken, Long userID, String username, String email, String firstname,
-            String lastname, List<String> roles) {
+    public JwtResponse(String accessToken, Long userID, String username, String email, List<String> roles) {
         this.token = accessToken;
         this.userID = userID;
         this.email = email;
         this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.roles = roles;
     }
 
     public String getAccessToken() {
@@ -54,22 +51,6 @@ public class JwtResponse {
         this.email = email;
     }
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -80,6 +61,12 @@ public class JwtResponse {
 
     public List<String> getRoles() {
         return roles;
+    }
+
+    @Override
+    public String toString() {
+        return "JwtResponse [token=" + token + ", type=" + type + ", userID=" + userID + ", username=" + username
+                + ", email=" + email + ", roles=" + roles + "]";
     }
 
 }

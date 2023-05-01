@@ -45,7 +45,7 @@ public class UserModel {
 
     }
 
-    public UserModel(Long userID, String email, String username, String password, String firstname,
+    public UserModel(Long userID, String username, String email, String password, String firstname,
             String lastname) {
         super();
         this.userID = userID;

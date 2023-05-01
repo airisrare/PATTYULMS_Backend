@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.pattyulms.util.S3Util;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import static spark.Spark.post;
+import spark.Request;
+import spark.Response;
+import spark.Service.StaticFiles;
+
+import static spark.Spark.staticFiles;
 import com.example.pattyulms.config.s3Config;
 import com.example.pattyulms.models.ProductModel;
 import com.example.pattyulms.repository.ProductRepo;
@@ -38,8 +48,12 @@ public class ProductController {
     @Autowired
     ProductRepo productRepo;
 
+    // This is for autogenerating the nect id for a product if we create one
     @Autowired
     ProductSequenceGenService productSequenceGenService;
+
+    @Value("${Stripe.apiKey}")
+    private String stripeKey;
 
     @Autowired
     S3Util s3Util;
@@ -205,5 +219,35 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping(value = "/checkout-session")
+    public String createCheckoutSession(Request request, Response response) {
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:3000/success" + "?success=true")
+                .setCancelUrl("http://localhost:3000/canceled" + "?canceled=true")
+                .setAutomaticTax(
+                        SessionCreateParams.AutomaticTax.builder()
+                                .setEnabled(true)
+                                .build())
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                // Provide the exact Price ID (for example, pr_1234) of the product you want to
+                                // sell
+                                .setPrice("price_1N0ZP0CTTGR7rgLf25k3zeRQ")
+                                .build())
+                .build();
+        Session session = null;
+        try {
+            session = Session.create(params);
+            if (session != null) {
+                response.redirect(session.getUrl(), 303);
+            }
+        } catch (StripeException e) {
+            e.printStackTrace();
+        }
+        return "";
+    };
 
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthEntryPoint implements AuthenticationEntryPoint {
+    // Auth entry point
 
     private static final Logger logger = LoggerFactory.getLogger(AuthEntryPoint.class);
 

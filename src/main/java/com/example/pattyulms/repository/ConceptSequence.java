@@ -5,13 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "concept_sequences")
 public class ConceptSequence {
+    // For keeping track of ID in order
 
     @Id
     private String conceptID;
     private long seq;
 
     public ConceptSequence() {
-        
+
     }
 
     public String getConceptID() {
@@ -28,5 +29,5 @@ public class ConceptSequence {
 
     public void setSeq(long seq) {
         this.seq = seq;
-    }    
+    }
 }

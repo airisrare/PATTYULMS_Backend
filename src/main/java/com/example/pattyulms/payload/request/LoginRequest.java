@@ -3,6 +3,7 @@ package com.example.pattyulms.payload.request;
 import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
+    // This is the login request and the credentials we will send
     @NotBlank
     private String username;
 
@@ -23,6 +24,11 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "LoginRequest [username=" + username + ", password=" + password + "]";
     }
 
 }

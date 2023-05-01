@@ -11,21 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 
-
-
 @Service
 public class ProductSequenceGenService {
-    
+    // Add 1 to id sequence in mongo
+
     private MongoOperations mongoOperations;
 
     @Autowired
-    public ProductSequenceGenService(MongoOperations mongoOperations){
+    public ProductSequenceGenService(MongoOperations mongoOperations) {
         this.mongoOperations = mongoOperations;
     }
 
-    public Long generateSequence(String seqName){
+    public Long generateSequence(String seqName) {
         ProductSequence counter = mongoOperations.findAndModify(query(where("productID").is(seqName)),
-        new Update().inc("seq", 1), options().returnNew(true).upsert(true),ProductSequence.class);
+                new Update().inc("seq", 1), options().returnNew(true).upsert(true), ProductSequence.class);
         return !Objects.isNull(counter) ? counter.getSeq() : 1;
     }
 }

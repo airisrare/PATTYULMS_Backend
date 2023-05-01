@@ -52,23 +52,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // @Bean
-    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    // http
-    // .cors().and().csrf().disable()
-    // .authorizeRequests()
-    // .antMatchers("/api/auth/**").permitAll()
-    // .antMatchers("/").permitAll()
-    // .anyRequest().authenticated()
-    // .and()
-    // .exceptionHandling()
-    // .authenticationEntryPoint(unauthorizedHandler)
-    // .and()
-    // .sessionManagement()
-    // .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-    // return http.build();
-    // }
+    // Security filter for pages
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -76,7 +60,7 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/auth/signin").permitAll()
+                .antMatchers("/api/auth/signin//**").permitAll()
                 .antMatchers("/api/products/**").permitAll()
                 .antMatchers("/concepts/gallery/**").permitAll()
                 .antMatchers("/users/everyone/**").permitAll()

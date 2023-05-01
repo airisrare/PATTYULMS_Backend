@@ -16,6 +16,7 @@ import io.jsonwebtoken.*;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
+    // JWT keys
     @Value("${pattyulms.app.jwtSecretKey}")
     private String jwtSecret;
 

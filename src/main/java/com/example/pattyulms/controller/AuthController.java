@@ -34,7 +34,9 @@ import com.example.pattyulms.repository.UserSequenceGenService;
 import com.example.pattyulms.security.jwt.JwtUtils;
 import com.example.pattyulms.security.services.UserDetailsImpl;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+// @CrossOrigin(origins = "http://localhost:3000")
+// @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -56,37 +58,38 @@ public class AuthController {
         private UserSequenceGenService userSequenceGenService;
 
         @PostMapping("/signin")
+        // Authenicate user with login credentials
         public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
+                // Spring security authentication
                 Authentication authentication = authenticationManager.authenticate(
-                                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                                new UsernamePasswordAuthenticationToken(
+                                                loginRequest.getUsername(),
                                                 loginRequest.getPassword()));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String jwt = jwtUtils.generateJwtToken(authentication);
-
+                // Spring security authenication manager essentialls
                 UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
                 List<String> roles = userDetails.getAuthorities().stream()
                                 .map(item -> item.getAuthority())
                                 .collect(Collectors.toList());
-
+                // Return result
                 return ResponseEntity.ok(new JwtResponse(jwt,
                                 userDetails.getUserID(),
-                                userDetails.getEmail(),
                                 userDetails.getUsername(),
-                                userDetails.getFirstname(),
-                                userDetails.getLastname(),
+                                userDetails.getEmail(),
                                 roles));
         }
 
         @PostMapping("/signup")
         public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+                // Username taken
                 if (userRepo.existsByUsername(signUpRequest.getUsername())) {
                         return ResponseEntity
                                         .badRequest()
                                         .body(new MessageResponse("Error: Username is already taken!"));
                 }
-
+                // Email taken
                 if (userRepo.existsByEmail(signUpRequest.getEmail())) {
                         return ResponseEntity
                                         .badRequest()
@@ -105,7 +108,10 @@ public class AuthController {
 
                         Set<String> strRoles = signUpRequest.getRoles();
                         Set<UserRole> roles = new HashSet<>();
-
+                        // User roles
+                        // Omni is the top role
+                        // Admin has not been established
+                        // People who sign in get user roles
                         if (strRoles == null) {
                                 UserRole userRole = roleRepo.findByName(EUserRole.USER)
                                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -127,15 +133,17 @@ public class AuthController {
                                                         roles.add(modRole);
 
                                                         break;
-                                                default:
+                                                case "user":
                                                         UserRole userRole = roleRepo.findByName(EUserRole.USER)
                                                                         .orElseThrow(() -> new RuntimeException(
                                                                                         "Error: Role is not found."));
                                                         roles.add(userRole);
+                                                        break;
+
                                         }
                                 });
                         }
-
+                        // Set role and insert user into the database
                         user.setRoles(roles);
                         userRepo.insert(user);
 

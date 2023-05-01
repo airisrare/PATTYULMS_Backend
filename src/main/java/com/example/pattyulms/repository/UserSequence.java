@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "user_sequences")
 public class UserSequence {
-
+    // Add 1 to id sequence in mongo
     @Id
     private String userID;
     private long seq;
@@ -30,6 +30,4 @@ public class UserSequence {
         this.seq = seq;
     }
 
-    
-    
 }
